@@ -1,0 +1,49 @@
+{
+  "name": "flow",
+  "version": "0.0.1",
+  "description": "Flow is a channel to follow along systems in a corporation. It can be used for testing or quickly ramping features across various systems.",
+  "main": "main.js",
+  "scripts": {
+    "production": "parcel build client/index.html --public-url ./",
+    "frontend": "parcel client/index.html",
+    "electron": "electron .",
+    "start": "npm-run-all --parallel frontend electron",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sujith Bheemireddi",
+  "license": "ISC",
+  "dependencies": {
+    "antd": "^3.4.0",
+    "aphrodite-jss": "^2.0.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "prop-types": "^15.6.1",
+    "react": "^16.3.1",
+    "react-dom": "^16.3.1",
+    "react-redux": "^5.0.7",
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2",
+    "react-router-redux": "next",
+    "redux": "^3.7.2",
+    "redux-persist": "^5.9.1",
+    "redux-sequence-action": "^0.2.1",
+    "redux-thunk": "^2.2.0",
+    "shortid": "^2.2.8",
+    "socket.io-client": "^2.1.0",
+    "url": "^0.11.0"
+  },
+  "devDependencies": {
+    "babel-plugin-import": "^1.7.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2017": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "electron": "^1.8.4",
+    "eslint": "^4.19.1",
+    "node-sass": "^4.8.3",
+    "npm-run-all": "^4.1.2",
+    "parcel-bundler": "^1.7.0",
+    "react-hot-loader": "^4.0.1"
+  }
+}

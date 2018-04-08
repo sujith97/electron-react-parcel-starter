@@ -1,0 +1,153 @@
+#! /Users/sbheemir/.nvm/versions/node/v9.3.0/bin/node
+
+const fs = require("fs");
+const path = require("path");
+const currentFolder = __dirname;
+
+const create = screen => {
+  const ducksPath = path.join(
+    currentFolder,
+    "client",
+    "scripts",
+    "redux",
+    "ducks"
+  );
+
+  const screensPath = path.join(currentFolder, "client", "scripts", "screens");
+
+  fs.mkdirSync(path.join(screensPath, screen));
+
+  fs.writeFileSync(
+    path.join(screensPath, screen, `styles.js`),
+    getStylesCode(screen)
+  );
+
+  fs.writeFileSync(
+    path.join(screensPath, screen, `index.js`),
+    getComponentCode(screen)
+  );
+
+  fs.writeFileSync(
+    path.join(ducksPath, `${screen}.js`),
+    getReducerCode(screen)
+  );
+
+  fs.writeFileSync(
+    path.join(ducksPath, `index.js`),
+    getDucksCode(ducksPath, screen)
+  );
+};
+
+const getStylesCode = screen => stylesCode.replace(/\<SCREEN\>/g, screen);
+
+const getComponentCode = screen =>
+  componentCode.replace(
+    /\<SCREEN\>/g,
+    screen.charAt(0).toUpperCase() + screen.slice(1)
+  );
+
+const getReducerCode = screen => reducerCode.replace(/\<SCREEN\>/g, screen);
+
+const getDucksCode = (ducksPath, screen) => {
+  const indexJs = fs.readFileSync(path.join(ducksPath, "index.js"), "utf8");
+  const lines = indexJs.split("\n");
+  let newLines = "";
+  let importFound = false;
+  let importAppended = false;
+  let exportFound = false;
+  let exportAppended = false;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.trim().startsWith("import")) {
+      importFound = true;
+    } else if (importFound && !importAppended && !line.trim()) {
+      importAppended = true;
+      newLines += `\nimport ${screen}Reducer from "./${screen}";`;
+    } else if (
+      importFound &&
+      importAppended &&
+      line.trim().startsWith("export")
+    ) {
+      exportFound = true;
+    } else if (
+      importFound &&
+      importAppended &&
+      exportFound &&
+      line.endsWith("};")
+    ) {
+      exportAppended = true;
+      newLines += `,\n  ${screen}: ${screen}Reducer`;
+    }
+    newLines += "\n" + line;
+  }
+  return newLines;
+};
+
+const componentCode = `
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { withRouter } from "react-router";
+import {css} from "aphrodite-jss";
+import sheet from "./styles.js";
+
+class <SCREEN> extends Component {
+  render() {
+    return <div className={css(sheet.container)}><SCREEN></div>;
+  }
+}
+
+const mapStateToProps = state => {
+  return {};
+};
+
+const mapDispatchToProps = dispatch => {
+  return {};
+};
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(<SCREEN>));
+
+`;
+
+const stylesCode = `
+import {StyleSheet} from "aphrodite-jss";
+
+export default StyleSheet.create({
+  container: {
+    display: "flex",
+    flex: 1
+  },
+});
+`;
+
+const reducerCode = `
+import createReducer from "../../library/createReducer";
+
+const SOME_EVENT = "/<SCREEN>/event";
+
+const initialState = {
+  someState: false
+};
+
+export default createReducer(initialState, {
+  [SOME_EVENT]: (state, action) => {
+    return {
+      ...state,
+      someState: action.payload
+    };
+  }
+});
+
+export function triggerEvent(eventPayload) {
+  return {
+    type: SOME_EVENT,
+    payload: eventPayload
+  };
+}
+
+`;
+
+if (!process.argv[2]) {
+  throw new Error("Please provide component name.");
+} else {
+  create(process.argv[2]);
+}

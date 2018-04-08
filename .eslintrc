@@ -1,0 +1,17 @@
+{
+  "env": {
+    "es6": true,
+    "node": true,
+    "browser": true
+  },
+  "ecmaFeatures": {
+      "jsx": true,
+      "experimentalObjectRestSpread": true
+  },
+  "plugins": [
+      "react"
+  ],
+  "rules": {
+    "no-restricted-modules": "off"
+  }
+}
